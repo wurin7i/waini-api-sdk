@@ -7,37 +7,40 @@
  * @license https://opensource.org/license/mit/ MIT License
  */
 
+declare(strict_types=1);
+
 namespace WuriN7i\ApiSdk\Requests\App;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
+
+use function array_filter;
 
 /**
  * appLoginWithCode
  */
 class AppLoginWithCode extends Request
 {
-	protected Method $method = Method::GET;
+    protected Method $method = Method::GET;
 
+    /**
+     * @param string|null $phone Your phone number
+     */
+    public function __construct(
+        protected ?string $phone = null,
+    ) {
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/app/login-with-code";
-	}
+    public function resolveEndpoint(): string
+    {
+        return '/app/login-with-code';
+    }
 
-
-	/**
-	 * @param null|string $phone Your phone number
-	 */
-	public function __construct(
-		protected ?string $phone = null,
-	) {
-	}
-
-
-	public function defaultQuery(): array
-	{
-		return array_filter(['phone' => $this->phone]);
-	}
+    /**
+     * @return array<string, string|null>
+     */
+    public function defaultQuery(): array
+    {
+        return array_filter(['phone' => $this->phone]);
+    }
 }

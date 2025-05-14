@@ -7,9 +7,10 @@
  * @license https://opensource.org/license/mit/ MIT License
  */
 
+declare(strict_types=1);
+
 namespace WuriN7i\ApiSdk\Requests\Message;
 
-use DateTime;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -20,22 +21,20 @@ use Saloon\Traits\Body\HasJsonBody;
  */
 class UpdateMessage extends Request implements HasBody
 {
-	use HasJsonBody;
+    use HasJsonBody;
 
-	protected Method $method = Method::POST;
+    protected Method $method = Method::POST;
 
+    public function resolveEndpoint(): string
+    {
+        return "/message/{$this->messageId}/update";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/message/{$this->messageId}/update";
-	}
-
-
-	/**
-	 * @param string $messageId Message ID
-	 */
-	public function __construct(
-		protected string $messageId,
-	) {
-	}
+    /**
+     * @param string $messageId Message ID
+     */
+    public function __construct(
+        protected string $messageId,
+    ) {
+    }
 }

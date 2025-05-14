@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WuriN7i\ApiSdk\Platform\Contracts;
 
 interface Identifier

@@ -7,6 +7,8 @@
  * @license https://opensource.org/license/mit/ MIT License
  */
 
+declare(strict_types=1);
+
 namespace WuriN7i\ApiSdk\Resource;
 
 use Saloon\Http\Response;
@@ -15,8 +17,8 @@ use WuriN7i\ApiSdk\Resource;
 
 class Newsletter extends Resource
 {
-	public function unfollowNewsletter(): Response
-	{
-		return $this->connector->send(new UnfollowNewsletter());
-	}
+    public function unfollowNewsletter(): Response
+    {
+        return $this->connector->send(new UnfollowNewsletter());
+    }
 }

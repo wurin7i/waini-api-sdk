@@ -7,9 +7,10 @@
  * @license https://opensource.org/license/mit/ MIT License
  */
 
+declare(strict_types=1);
+
 namespace WuriN7i\ApiSdk\Requests\App;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -18,16 +19,14 @@ use Saloon\Http\Request;
  */
 class AppLogout extends Request
 {
-	protected Method $method = Method::GET;
+    protected Method $method = Method::GET;
 
+    public function __construct()
+    {
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/app/logout";
-	}
-
-
-	public function __construct()
-	{
-	}
+    public function resolveEndpoint(): string
+    {
+        return '/app/logout';
+    }
 }

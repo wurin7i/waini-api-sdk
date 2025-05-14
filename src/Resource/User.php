@@ -7,6 +7,8 @@
  * @license https://opensource.org/license/mit/ MIT License
  */
 
+declare(strict_types=1);
+
 namespace WuriN7i\ApiSdk\Resource;
 
 use Saloon\Http\Response;
@@ -22,57 +24,50 @@ use WuriN7i\ApiSdk\Resource;
 
 class User extends Resource
 {
-	/**
-	 * @param string $phone Phone number with country code
-	 */
-	public function userInfo(?string $phone): Response
-	{
-		return $this->connector->send(new UserInfo($phone));
-	}
+    /**
+     * @param string $phone Phone number with country code
+     */
+    public function userInfo(?string $phone): Response
+    {
+        return $this->connector->send(new UserInfo($phone));
+    }
 
+    /**
+     * @param string $phone Phone number with country code
+     * @param bool $isPreview Whether to fetch a preview of the avatar
+     */
+    public function userAvatar(?string $phone, ?bool $isPreview): Response
+    {
+        return $this->connector->send(new UserAvatar($phone, $isPreview));
+    }
 
-	/**
-	 * @param string $phone Phone number with country code
-	 * @param bool $isPreview Whether to fetch a preview of the avatar
-	 */
-	public function userAvatar(?string $phone, ?bool $isPreview): Response
-	{
-		return $this->connector->send(new UserAvatar($phone, $isPreview));
-	}
+    public function userChangeAvatar(): Response
+    {
+        return $this->connector->send(new UserChangeAvatar());
+    }
 
+    public function userChangePushName(): Response
+    {
+        return $this->connector->send(new UserChangePushName());
+    }
 
-	public function userChangeAvatar(): Response
-	{
-		return $this->connector->send(new UserChangeAvatar());
-	}
+    public function userMyPrivacy(): Response
+    {
+        return $this->connector->send(new UserMyPrivacy());
+    }
 
+    public function userMyGroups(): Response
+    {
+        return $this->connector->send(new UserMyGroups());
+    }
 
-	public function userChangePushName(): Response
-	{
-		return $this->connector->send(new UserChangePushName());
-	}
+    public function userMyNewsletter(): Response
+    {
+        return $this->connector->send(new UserMyNewsletter());
+    }
 
-
-	public function userMyPrivacy(): Response
-	{
-		return $this->connector->send(new UserMyPrivacy());
-	}
-
-
-	public function userMyGroups(): Response
-	{
-		return $this->connector->send(new UserMyGroups());
-	}
-
-
-	public function userMyNewsletter(): Response
-	{
-		return $this->connector->send(new UserMyNewsletter());
-	}
-
-
-	public function userMyContacts(): Response
-	{
-		return $this->connector->send(new UserMyContacts());
-	}
+    public function userMyContacts(): Response
+    {
+        return $this->connector->send(new UserMyContacts());
+    }
 }

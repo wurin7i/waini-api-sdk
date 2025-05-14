@@ -7,6 +7,8 @@
  * @license https://opensource.org/license/mit/ MIT License
  */
 
+declare(strict_types=1);
+
 namespace WuriN7i\ApiSdk\Resource;
 
 use Saloon\Http\Response;
@@ -15,8 +17,8 @@ use WuriN7i\ApiSdk\Resource;
 
 class Statics extends Resource
 {
-	public function QrCode(string $fileName): Response
-	{
-		return $this->connector->send(new QrCode($fileName));
-	}
+    public function qrCode(string $fileName): Response
+    {
+        return $this->connector->send(new QrCode($fileName));
+    }
 }

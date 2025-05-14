@@ -7,6 +7,8 @@
  * @license https://opensource.org/license/mit/ MIT License
  */
 
+declare(strict_types=1);
+
 namespace WuriN7i\ApiSdk\Resource;
 
 use Saloon\Http\Response;
@@ -24,65 +26,56 @@ use WuriN7i\ApiSdk\Resource;
 
 class Group extends Resource
 {
-	public function createGroup(): Response
-	{
-		return $this->connector->send(new CreateGroup());
-	}
+    public function createGroup(): Response
+    {
+        return $this->connector->send(new CreateGroup());
+    }
 
+    public function addParticipantToGroup(): Response
+    {
+        return $this->connector->send(new AddParticipantToGroup());
+    }
 
-	public function addParticipantToGroup(): Response
-	{
-		return $this->connector->send(new AddParticipantToGroup());
-	}
+    public function removeParticipantFromGroup(): Response
+    {
+        return $this->connector->send(new RemoveParticipantFromGroup());
+    }
 
+    public function promoteParticipantToAdmin(): Response
+    {
+        return $this->connector->send(new PromoteParticipantToAdmin());
+    }
 
-	public function removeParticipantFromGroup(): Response
-	{
-		return $this->connector->send(new RemoveParticipantFromGroup());
-	}
+    public function demoteParticipantToMember(): Response
+    {
+        return $this->connector->send(new DemoteParticipantToMember());
+    }
 
+    public function joinGroupWithLink(): Response
+    {
+        return $this->connector->send(new JoinGroupWithLink());
+    }
 
-	public function promoteParticipantToAdmin(): Response
-	{
-		return $this->connector->send(new PromoteParticipantToAdmin());
-	}
+    /**
+     * @param string $groupId The group ID to get participant requests for
+     */
+    public function getGroupParticipantRequests(string $groupId): Response
+    {
+        return $this->connector->send(new GetGroupParticipantRequests($groupId));
+    }
 
+    public function approveGroupParticipantRequest(): Response
+    {
+        return $this->connector->send(new ApproveGroupParticipantRequest());
+    }
 
-	public function demoteParticipantToMember(): Response
-	{
-		return $this->connector->send(new DemoteParticipantToMember());
-	}
+    public function rejectGroupParticipantRequest(): Response
+    {
+        return $this->connector->send(new RejectGroupParticipantRequest());
+    }
 
-
-	public function joinGroupWithLink(): Response
-	{
-		return $this->connector->send(new JoinGroupWithLink());
-	}
-
-
-	/**
-	 * @param string $groupId The group ID to get participant requests for
-	 */
-	public function getGroupParticipantRequests(string $groupId): Response
-	{
-		return $this->connector->send(new GetGroupParticipantRequests($groupId));
-	}
-
-
-	public function approveGroupParticipantRequest(): Response
-	{
-		return $this->connector->send(new ApproveGroupParticipantRequest());
-	}
-
-
-	public function rejectGroupParticipantRequest(): Response
-	{
-		return $this->connector->send(new RejectGroupParticipantRequest());
-	}
-
-
-	public function leaveGroup(): Response
-	{
-		return $this->connector->send(new LeaveGroup());
-	}
+    public function leaveGroup(): Response
+    {
+        return $this->connector->send(new LeaveGroup());
+    }
 }

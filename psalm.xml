@@ -4,6 +4,7 @@
        xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
        cacheDirectory="./build/cache/psalm"
        errorLevel="1"
+
        findUnusedBaselineEntry="true"
        findUnusedCode="false"
        resolveFromConfigFile="true">
@@ -24,6 +25,7 @@
     <issueHandlers>
         <ClassMustBeFinal errorLevel="info"/>
         <MissingOverrideAttribute errorLevel="info"/>
+        <PropertyNotSetInConstructor errorLevel="info"/>
     </issueHandlers>
 
 </psalm>

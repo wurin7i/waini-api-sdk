@@ -7,12 +7,28 @@
  * @license https://opensource.org/license/mit/ MIT License
  */
 
+declare(strict_types=1);
+
 namespace WuriN7i\ApiSdk\Auth;
 
-use Saloon\Contracts\Authenticator;
-use Saloon\Http\PendingRequest;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use InvalidArgumentException;
+use Saloon\Contracts\Authenticator;
+use Saloon\Http\PendingRequest;
+use Throwable;
+
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function hash;
+use function is_array;
+use function json_decode;
+use function json_encode;
+use function rtrim;
+use function time;
+
+use const DIRECTORY_SEPARATOR;
 
 /**
  * SelfJwtAuthenticator
@@ -23,33 +39,77 @@ use Firebase\JWT\Key;
  */
 class SelfJwtAuthenticator implements Authenticator
 {
+    /**
+     * @var array<string, string>
+     */
     protected array $config;
     protected string $tokenPath;
 
-    public function __construct(array|string $config, string $tokenCacheDir = '/tmp')
+    /**
+     * Constructor for SelfJwtAuthenticator.
+     *
+     * @param array<string, string> | string $config Configuration array or path to JSON file.
+     */
+    public function __construct(array | string $config, string $tokenCacheDir = '/tmp')
     {
-        if (!is_array($config)) {
+        if (! is_array($config)) {
             $config = $this->loadConfigFromFile($config);
         }
 
         $this->validateConfig($config);
         $this->config = $config;
-
-        // Generate cache filename based on hash of config content
-        $hash = hash('sha256', json_encode($config));
-        $this->tokenPath = rtrim($tokenCacheDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . "waini__jwt_token_{$hash}.json";
+        $this->tokenPath = $this->generateTokenPath($config, $tokenCacheDir);
     }
 
+    /**
+     * Generate a unique token path based on the configuration.
+     *
+     * @param array<string, string> $config Configuration array.
+     */
+    protected function generateTokenPath(array $config, string $tokenCacheDir): string
+    {
+        // Generate cache filename based on hash of config content
+        $jsonConfig = json_encode($config);
+        if ($jsonConfig === false) {
+            throw new InvalidArgumentException('Failed to encode configuration to JSON.');
+        }
+        $hash = hash('sha256', $jsonConfig);
+
+        return rtrim($tokenCacheDir, DIRECTORY_SEPARATOR)
+            . DIRECTORY_SEPARATOR
+            . "waini__jwt_token_{$hash}.json";
+    }
+
+    /**
+     * Load configuration from a JSON file.
+     *
+     * @return array<string, string> Decoded JSON configuration.
+     */
     protected function loadConfigFromFile(string $configFile): array
     {
         $configContent = file_get_contents($configFile);
-        return json_decode($configContent, true);
+        if ($configContent === false) {
+            throw new InvalidArgumentException("Failed to read configuration file: {$configFile}");
+        }
+
+        /** @var array<string, string>|false $decodedConfig */
+        $decodedConfig = json_decode($configContent, true);
+        if (!is_array($decodedConfig)) {
+            throw new InvalidArgumentException("Invalid JSON configuration in file: {$configFile}");
+        }
+
+        return $decodedConfig;
     }
 
+    /**
+     * Validate the configuration array.
+     *
+     * @param array<string, string> $config Configuration array.
+     */
     protected function validateConfig(array $config): void
     {
         if (!isset($config['key'], $config['secret'], $config['algorithm'])) {
-            throw new \InvalidArgumentException('Invalid configuration for JWT authentication.');
+            throw new InvalidArgumentException('Invalid configuration for JWT authentication.');
         }
     }
 
@@ -62,18 +122,24 @@ class SelfJwtAuthenticator implements Authenticator
     protected function getOrCreateToken(): string
     {
         if (file_exists($this->tokenPath)) {
-            $cached = json_decode(file_get_contents($this->tokenPath), true);
-            if (!empty($cached['token']) && !$this->isExpired($cached['token'])) {
+            $cached = $this->loadConfigFromFile($this->tokenPath);
+            if (isset($cached['token']) && !$this->isExpired($cached['token'])) {
                 return $cached['token'];
             }
         }
 
         $token = $this->generateJwtToken();
 
-        file_put_contents($this->tokenPath, json_encode([
+        $encodedData = json_encode([
             'token' => $token,
-            'created_at' => time()
-        ]));
+            'created_at' => time(),
+        ]);
+
+        if ($encodedData === false) {
+            throw new InvalidArgumentException('Failed to encode token data to JSON.');
+        }
+
+        file_put_contents($this->tokenPath, $encodedData);
 
         return $token;
     }
@@ -86,16 +152,29 @@ class SelfJwtAuthenticator implements Authenticator
             'exp' => time() + 3600,
         ];
 
-        return JWT::encode($payload, $this->config['secret'], $this->config['algorithm']);
+        return JWT::encode($payload, $this->getConfig('secret'), $this->getConfig('algorithm'));
     }
 
     protected function isExpired(string $token): bool
     {
         try {
-            $decoded = JWT::decode($token, new Key($this->config['secret'], $this->config['algorithm']));
+            $decoded = JWT::decode(
+                $token,
+                new Key($this->getConfig('secret'), $this->getConfig('algorithm')),
+            );
+
             return ($decoded->exp ?? 0) < time();
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             return true;
         }
+    }
+
+    protected function getConfig(string $key): string
+    {
+        if (!isset($this->config[$key])) {
+            throw new InvalidArgumentException("Configuration key '{$key}' not found.");
+        }
+
+        return $this->config[$key];
     }
 }

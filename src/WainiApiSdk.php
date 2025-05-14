@@ -7,8 +7,11 @@
  * @license https://opensource.org/license/mit/ MIT License
  */
 
+declare(strict_types=1);
+
 namespace WuriN7i\ApiSdk;
 
+use Override;
 use Saloon\Http\Connector;
 use WuriN7i\ApiSdk\Resource\App;
 use WuriN7i\ApiSdk\Resource\Group;
@@ -22,57 +25,55 @@ use WuriN7i\ApiSdk\Resource\User;
  * WhatsApp API MultiDevice
  *
  * This API is used for sending whatsapp via API
+ *
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 class WainiApiSdk extends Connector
 {
-	public function __construct(
-		protected string $baseUrl
-	) {
-	}
+    public function __construct(
+        protected string $baseUrl,
+    ) {
+        /** @psalm-suppress UndefinedMethod */
+    }
 
-	public function resolveBaseUrl(): string
-	{
-		return $this->baseUrl;
-	}
+    #[Override]
+    public function resolveBaseUrl(): string
+    {
+        return $this->baseUrl;
+    }
 
+    public function appApi(): App
+    {
+        return new App($this);
+    }
 
-	public function appApi(): App
-	{
-		return new App($this);
-	}
+    public function groupApi(): Group
+    {
+        return new Group($this);
+    }
 
+    public function messageApi(): Message
+    {
+        return new Message($this);
+    }
 
-	public function groupApi(): Group
-	{
-		return new Group($this);
-	}
+    public function newsletterApi(): Newsletter
+    {
+        return new Newsletter($this);
+    }
 
+    public function sendApi(): Send
+    {
+        return new Send($this);
+    }
 
-	public function messageApi(): Message
-	{
-		return new Message($this);
-	}
+    public function userApi(): User
+    {
+        return new User($this);
+    }
 
-
-	public function newsletterApi(): Newsletter
-	{
-		return new Newsletter($this);
-	}
-
-
-	public function sendApi(): Send
-	{
-		return new Send($this);
-	}
-
-
-	public function userApi(): User
-	{
-		return new User($this);
-	}
-
-	public function statics(): Statics
-	{
-		return new Statics($this);
-	}
+    public function statics(): Statics
+    {
+        return new Statics($this);
+    }
 }

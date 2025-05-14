@@ -7,6 +7,8 @@
  * @license https://opensource.org/license/mit/ MIT License
  */
 
+declare(strict_types=1);
+
 namespace WuriN7i\ApiSdk\Resource;
 
 use Saloon\Http\Response;
@@ -24,62 +26,53 @@ use WuriN7i\ApiSdk\Resource;
 
 class Send extends Resource
 {
-	public function sendMessage(): Response
-	{
-		return $this->connector->send(new SendMessage());
-	}
+    public function sendMessage(string $to, string $message, ?string $repliedMessageId = null): Response
+    {
+        return $this->connector->send(new SendMessage($to, $message, $repliedMessageId));
+    }
 
+    public function sendImage(): Response
+    {
+        return $this->connector->send(new SendImage());
+    }
 
-	public function sendImage(): Response
-	{
-		return $this->connector->send(new SendImage());
-	}
+    public function sendAudio(): Response
+    {
+        return $this->connector->send(new SendAudio());
+    }
 
+    public function sendFile(): Response
+    {
+        return $this->connector->send(new SendFile());
+    }
 
-	public function sendAudio(): Response
-	{
-		return $this->connector->send(new SendAudio());
-	}
+    public function sendVideo(): Response
+    {
+        return $this->connector->send(new SendVideo());
+    }
 
+    public function sendContact(): Response
+    {
+        return $this->connector->send(new SendContact());
+    }
 
-	public function sendFile(): Response
-	{
-		return $this->connector->send(new SendFile());
-	}
+    public function sendLink(): Response
+    {
+        return $this->connector->send(new SendLink());
+    }
 
+    public function sendLocation(): Response
+    {
+        return $this->connector->send(new SendLocation());
+    }
 
-	public function sendVideo(): Response
-	{
-		return $this->connector->send(new SendVideo());
-	}
+    public function sendPoll(): Response
+    {
+        return $this->connector->send(new SendPoll());
+    }
 
-
-	public function sendContact(): Response
-	{
-		return $this->connector->send(new SendContact());
-	}
-
-
-	public function sendLink(): Response
-	{
-		return $this->connector->send(new SendLink());
-	}
-
-
-	public function sendLocation(): Response
-	{
-		return $this->connector->send(new SendLocation());
-	}
-
-
-	public function sendPoll(): Response
-	{
-		return $this->connector->send(new SendPoll());
-	}
-
-
-	public function sendPresence(): Response
-	{
-		return $this->connector->send(new SendPresence());
-	}
+    public function sendPresence(): Response
+    {
+        return $this->connector->send(new SendPresence());
+    }
 }
