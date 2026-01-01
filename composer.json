@@ -22,7 +22,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "firebase/php-jwt": "^6.11",
+        "firebase/php-jwt": "^6.11 || ^7.0",
         "saloonphp/saloon": "^3.0"
     },
     "require-dev": {
